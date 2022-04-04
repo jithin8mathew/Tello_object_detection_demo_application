@@ -297,17 +297,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/droneUP2"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="0dp"-->
-<!--        android:layout_marginEnd="94dp"-->
-<!--        android:text="Forward"-->
-<!--        android:textSize="10dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/joystickViewRight"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
+    <TextView
+        android:id="@+id/droneUP2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="94dp"
+        android:text="Forward"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@id/joystickViewRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <TextView
         android:id="@+id/droneTrunRight"
@@ -321,15 +321,15 @@
         app:layout_constraintStart_toEndOf="@+id/joystickViewLeft"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/droneDown"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="96dp"-->
-<!--        android:text="Down"-->
-<!--        android:textSize="10dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/joystickViewLeft" />-->
+    <TextView
+        android:id="@+id/droneDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:text="Down"
+        android:textSize="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/joystickViewLeft" />
 
     <TextView
         android:id="@+id/droneDown2"
@@ -365,17 +365,17 @@
         app:layout_constraintEnd_toStartOf="@+id/joystickViewRight"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-<!--    <TextView-->
-<!--        android:id="@+id/dronePitchRight"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginBottom="105dp"-->
-<!--        android:rotation="90"-->
-<!--        android:text="Right"-->
-<!--        android:textSize="10dp"-->
-<!--        app:layout_constraintHorizontal_bias="0.925"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/joystickViewRight"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent" />-->
+    <TextView
+        android:id="@+id/dronePitchRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="105dp"
+        android:rotation="90"
+        android:text="Right"
+        android:textSize="10dp"
+        app:layout_constraintHorizontal_bias="0.925"
+        app:layout_constraintStart_toEndOf="@+id/joystickViewRight"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <Switch
         android:id="@+id/videoFeed"
