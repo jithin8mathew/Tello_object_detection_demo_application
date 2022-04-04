@@ -60,7 +60,7 @@
         app:layout_constraintBottom_toTopOf="@+id/joystickViewRight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/takeoff"
-        app:srcCompat="@drawable/outline_rocket_24" />
+        app:srcCompat="@drawable/outline_flight_land_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/startDroneDetection"
@@ -77,7 +77,7 @@
         app:layout_constraintEnd_toStartOf="@+id/joystickViewRight"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toEndOf="@+id/joystickViewLeft"
-        app:srcCompat="@drawable/outline_rocket_24" />
+        app:srcCompat="@drawable/outline_play_circle_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/captureImage"
@@ -94,7 +94,7 @@
         app:layout_constraintStart_toEndOf="@+id/connectToDrone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.237"
-        app:srcCompat="@drawable/outline_rocket_24" />
+        app:srcCompat="@drawable/outline_camera_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/captureVideo"
@@ -111,7 +111,7 @@
         app:layout_constraintStart_toEndOf="@+id/captureImage"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.237"
-        app:srcCompat="@drawable/outline_rocket_24" />
+        app:srcCompat="@drawable/outline_videocam_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/connectToDrone"
@@ -277,7 +277,7 @@
         android:textOff="OFF"
         android:textOn="ON"
         app:backgroundTint="#ffcc00"
-        app:srcCompat="@drawable/outline_rocket_24"
+        app:srcCompat="@drawable/outline_flight_takeoff_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/joystickViewRight"
         app:layout_constraintTop_toBottomOf="@+id/droneSpeed"
