@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DemoApplication">
         <activity
+            android:name=".droneController"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
