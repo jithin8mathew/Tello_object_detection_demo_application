@@ -11,7 +11,8 @@
         android:theme="@style/Theme.DemoApplication">
         <activity
             android:name=".droneController"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
