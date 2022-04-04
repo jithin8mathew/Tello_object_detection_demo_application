@@ -6,4 +6,489 @@
     android:layout_height="match_parent"
     tools:context=".droneController">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bitView"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <!--    remove below code if not needed later-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/customINVBitView"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+<!--    <ViewStub-->
+<!--        android:id="@+id/droneWsh_detection_TV_st"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout="@layout/texture_view"-->
+<!--        app:layout_constraintBottom_toTopOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <TextView
+        android:id="@+id/spikeCountDrone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="0"
+        android:textColor="#80ffcc00"
+        android:textSize="100sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="-3dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/land"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+        android:gravity="center"
+        app:backgroundTint="#ffcc00"
+        app:layout_constraintBottom_toTopOf="@+id/joystickViewRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/takeoff"
+        app:srcCompat="@drawable/outline_rocket_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/startDroneDetection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+        android:gravity="center"
+        app:backgroundTint="#ffcc00"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintEnd_toStartOf="@+id/joystickViewRight"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toEndOf="@+id/joystickViewLeft"
+        app:srcCompat="@drawable/outline_rocket_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/captureImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+        android:gravity="center"
+        app:fabappSize="45dp"
+        app:backgroundTint="#ffcc00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/connectToDrone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.237"
+        app:srcCompat="@drawable/outline_rocket_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/captureVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+        android:gravity="center"
+        app:fabappSize="45dp"
+        app:backgroundTint="#ffcc00"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/captureImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.237"
+        app:srcCompat="@drawable/outline_rocket_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/connectToDrone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+
+        android:gravity="center"
+        app:backgroundTint="#ffcc00"
+        app:layout_constraintBottom_toTopOf="@+id/droneUP"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/outline_rocket_24" />
+
+    <io.github.controlwear.virtual.joystick.android.JoystickView
+        android:id="@+id/joystickViewLeft"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_marginBottom="26dp"
+        android:layout_marginStart="16dp"
+        app:JV_backgroundColor="#20000000"
+        app:JV_borderWidth="4dp"
+        app:JV_buttonColor="#ffcc00"
+        app:JV_buttonSizeRatio="35%"
+        app:JV_fixedCenter="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/joystickViewRight"
+        app:layout_constraintHorizontal_bias="0.032"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <io.github.controlwear.virtual.joystick.android.JoystickView
+        android:id="@+id/joystickViewRight"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="26dp"
+        app:JV_backgroundColor="#20000000"
+        app:JV_borderWidth="4dp"
+        app:JV_buttonColor="#ffcc00"
+        app:JV_buttonSizeRatio="35%"
+        app:JV_fixedCenter="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/droneSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="16dp"
+        android:text="Speed : 0.0 mph"
+        android:textSize="10dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneBattery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="Battery: na"
+        android:textSize="10dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintEnd_toStartOf="@+id/droneSpeed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneHeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="Height: na"
+        android:textSize="10dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintEnd_toStartOf="@+id/droneBattery"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="Temp: na"
+        android:textSize="10dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintEnd_toStartOf="@+id/droneHeight"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneBaro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="Baro: na"
+        android:textSize="10dp"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        android:background="@drawable/rounded_corner"
+        app:layout_constraintEnd_toStartOf="@+id/droneTemperature"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/droneAccleration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="Accleration: 0mph"
+        android:textSize="10dp"
+        android:background="@drawable/rounded_corner"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        app:layout_constraintEnd_toStartOf="@+id/droneBaro"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneTOF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="TOF: 0"
+        android:textSize="10dp"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        android:background="@drawable/rounded_corner"
+        app:layout_constraintEnd_toStartOf="@+id/droneAccleration"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/droneWIFI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="5dp"
+        android:text="WiFi: disconnected"
+        android:textSize="10dp"
+        android:padding="@dimen/cardview_compat_inset_shadow"
+        android:background="@drawable/rounded_corner"
+        app:layout_constraintEnd_toStartOf="@+id/droneTOF"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/takeoff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/round_back"
+        android:backgroundTint="#ffcc00"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:textOff="OFF"
+        android:textOn="ON"
+        app:backgroundTint="#ffcc00"
+        app:srcCompat="@drawable/outline_send_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/joystickViewRight"
+        app:layout_constraintTop_toBottomOf="@+id/droneSpeed"
+        app:layout_constraintVertical_bias="0.071" />
+
+    <TextView
+        android:id="@+id/droneUP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="104dp"
+        android:layout_marginBottom="0dp"
+        android:text="Up"
+        android:textSize="10dp"
+        android:layout_marginTop="174dp"
+        app:layout_constraintBottom_toTopOf="@+id/joystickViewLeft"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/droneUP2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="94dp"
+        android:text="Forward"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toTopOf="@id/joystickViewRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/droneTrunRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="105dp"
+        android:rotation="90"
+        android:text="Turn right"
+        android:textSize="10dp"
+        app:layout_constraintStart_toEndOf="@+id/joystickViewLeft"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/droneDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="96dp"
+        android:text="Down"
+        android:textSize="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/joystickViewLeft" />
+
+    <TextView
+        android:id="@+id/droneDown2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="90dp"
+        android:text="Backward"
+        android:textSize="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/joystickViewRight" />
+
+    <TextView
+        android:id="@+id/droneTrunLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="105dp"
+        android:rotation="-90"
+        android:text="Turn Left"
+        android:textSize="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/dronePitchLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="996dp"
+        android:layout_marginBottom="105dp"
+        android:rotation="-90"
+        android:text="Left"
+        android:textSize="10dp"
+        app:layout_constraintEnd_toStartOf="@+id/joystickViewRight"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/dronePitchRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="105dp"
+        android:rotation="90"
+        android:text="Right"
+        android:textSize="10dp"
+        app:layout_constraintHorizontal_bias="0.925"
+        app:layout_constraintStart_toEndOf="@+id/joystickViewRight"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Switch
+        android:id="@+id/videoFeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Video "
+        android:theme="@style/fieldOptimusSwitch"
+        app:layout_constraintBottom_toTopOf="@+id/connectToDrone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/horizontal"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="300dp"
+        android:layout_marginBottom="60dp"
+        android:gravity="center"
+        app:srcCompat="@drawable/hrizontal_roll"
+        app:layout_constraintBottom_toTopOf="@+id/startDroneDetection"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--    <com.example.fieldoptimus.DetectionResult-->
+    <!--        android:id="@+id/RV"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        app:layout_constraintDimensionRatio="1:1"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="1.0"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <ImageView
+        android:id="@+id/vertical"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="297dp"
+        android:layout_marginBottom="62dp"
+        android:gravity="center"
+        app:srcCompat="@drawable/vertical_pitch"
+        app:layout_constraintBottom_toTopOf="@+id/startDroneDetection"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBarDroneSpeed"
+        android:progress="100"
+        android:max="100"
+        android:layout_width="131dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="26dp"
+        android:thumbTint="@color/app_foreground_color"
+        android:progressTint="@color/app_foreground_color"
+        app:layout_constraintStart_toEndOf="@+id/videoFeed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/setDroneSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="28dp"
+        android:text="Speed"
+        android:textSize="10dp"
+        android:textColor="@color/app_foreground_color"
+        app:layout_constraintStart_toEndOf="@+id/seekBarDroneSpeed"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/totalSpikes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="136dp"
+        android:text="Total Spikes: 20546"
+        android:textSize="10dp"
+        android:visibility="invisible"
+        android:textColor="@color/app_foreground_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/droneHeight" />
+
+    <TextView
+        android:id="@+id/totalArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="136dp"
+        android:text="Total Area: 10ft"
+        android:textSize="10dp"
+        android:visibility="invisible"
+        android:textColor="@color/app_foreground_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/totalSpikes" />
+
+    <com.example.fieldoptimus.DetectionResult
+        android:id="@+id/RV2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
