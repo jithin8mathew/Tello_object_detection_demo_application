@@ -25,9 +25,12 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 public class droneController extends AppCompatActivity {
 
@@ -51,6 +54,9 @@ public class droneController extends AppCompatActivity {
     private int connectionClickCounter = 1; // for counting the number of times the button is clicked
     private boolean connectionFlag = false; // to check and maintain the connection status of the drone. Initially the drone is not conected, so the status is false
 
+    Pattern statePattern = Pattern.compile("-*\\d{0,3}\\.?\\d{0,2}[^\\D\\W\\s]");  // a regex pattern to read the tello state
+    private int RC[] = {0,0,0,0};       // initialize an array of variables for remote control
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +71,6 @@ public class droneController extends AppCompatActivity {
         jdroneAccleration = findViewById(R.id.droneAccleration);    // reading drone accleration
         jdroneWIFI = findViewById(R.id.droneWIFI);       // getting the wifi status
 //        jdroneWIFI.setBackgroundResource(R.drawable.rounded_corner_red);
-
-
-
-        Pattern statePattern = Pattern.compile("-*\\d{0,3}\\.?\\d{0,2}[^\\D\\W\\s]");  // a regex pattern to read the tello state
 
         connection = findViewById(R.id.connectToDrone); // a button to initiate establishing SDK mode with the drone by sending 'command' command
         connection.setOnClickListener(new View.OnClickListener(){
@@ -98,6 +100,32 @@ public class droneController extends AppCompatActivity {
         actionLnad.setOnClickListener(v -> {
             if (connectionFlag){
                 telloConnect("land");   // send land command
+            }
+        });
+
+        JoystickView leftjoystick = (JoystickView) findViewById(R.id.joystickViewLeft);
+        leftjoystick.setOnMoveListener(new JoystickView.OnMoveListener() {
+            @Override
+            public void onMove(int angle, int strength) {
+
+                if (angle >45 && angle <=135){
+                    RC[2]= strength;
+                }
+                if (angle >226 && angle <=315){
+                    strength *= -1;
+                    RC[2]= strength;
+                }
+                if (angle >135 && angle <=225){
+                    strength *= -1;
+                    RC[3]= strength;
+                }
+                if (angle >316 && angle <=359 || angle >0 && angle <=45){
+                    RC[3]= strength;
+                }
+
+                telloConnect("rc "+Integer.toString(RC[0])+" "+Integer.toString(RC[1])+" "+Integer.toString(RC[2])+" "+Integer.toString(RC[3]));
+                Arrays.fill(RC, 0);
+
             }
         });
 
