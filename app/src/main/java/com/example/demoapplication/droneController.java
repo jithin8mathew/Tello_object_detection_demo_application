@@ -5,6 +5,11 @@ import static java.lang.Thread.interrupted;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
@@ -25,9 +31,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -255,5 +263,126 @@ public class droneController extends AppCompatActivity {
 
             }
         }).start();
+    }
+
+    public void videoServer(final String strCommand, final BlockingQueue frameV) throws IOException { // add this for surfaceView : , Surface surface
+        telloConnect(strCommand);
+
+        BlockingQueue queue = frameV;
+
+        if (strCommand == "streamon"){
+            new Thread(new Runnable() {
+                public String videoString;
+                Boolean streamon = true;
+                public Bitmap resizedBM;
+
+                @Override
+                public void run() {
+
+                    byte[] header_sps = {0, 0, 0, 1, 103, 77, 64, 40, (byte) 149, (byte) 160, 60, 5, (byte) 185}; // the correct SPS NAL
+                    byte[] header_pps = {0, 0, 0, 1, 104, (byte) 238, 56, (byte) 128};  // the correct PPS NAL
+
+                    MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 960, 720);
+                    format.setByteBuffer("csd-0", ByteBuffer.wrap(header_sps)); // this is a serious no no
+                    format.setByteBuffer("csd-1", ByteBuffer.wrap(header_pps));
+                    format.setInteger(MediaFormat.KEY_WIDTH, 960);
+                    format.setInteger(MediaFormat.KEY_HEIGHT, 720);
+                    format.setInteger(MediaFormat.KEY_CAPTURE_RATE,30);
+                    format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible); //
+                    format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 960 * 720);
+
+                    try {
+                        m_codec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
+                        m_codec.configure(format, null ,null,0); // was 0
+                        startMs = System.currentTimeMillis();
+                        m_codec.start();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    DatagramSocket socketVideo = null;
+                    try {
+                        socketVideo = new DatagramSocket(null);
+                        socketVideo.setReuseAddress(true);
+                        socketVideo.setBroadcast(true);
+                        socketVideo.bind(new InetSocketAddress(11111));
+
+
+                        byte[] videoBuf = new byte[2048];
+                        DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length);
+                        int destPos = 0;
+                        byte[] data_new = new byte[60000]; // 1460 + 3
+                        while (streamon) {
+                            socketVideo.receive(videoPacket);
+                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
+                            destPos += videoPacket.getLength();
+                            byte[] pacMan = new byte[videoPacket.getLength()];
+                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), pacMan, 0, videoPacket.getLength());
+                            int len = videoPacket.getLength();
+                            output.write(pacMan);
+                            if (len < 1460) {
+                                destPos=0;
+                                byte[] data = output.toByteArray();
+                                output.reset();
+                                output.flush();
+                                output.close();
+                                int inputIndex = m_codec.dequeueInputBuffer(-1); // dosent matter of its -1 of 10000
+                                if (inputIndex >= 0) {
+                                    ByteBuffer buffer = m_codec.getInputBuffer(inputIndex);
+                                    if (buffer != null){
+                                        buffer.clear(); // exp
+                                        buffer.put(data); //  Caused by: java.lang.NullPointerException: Attempt to get length of null array // if nothing else pass: data
+                                        // if you change buffer.put also change queueInputBuffer 3rd prameter (lenth of passed byffer array)
+                                        long presentationTimeUs = System.currentTimeMillis() - startMs;
+                                        m_codec.queueInputBuffer(inputIndex, 0, data.length, presentationTimeUs, 0);  // MediaCodec.BUFFER_FLAG_END_OF_STREAM -> produce green screen // MediaCodec.BUFFER_FLAG_KEY_FRAME and 0 works too // MediaCodec.BUFFER_FLAG_PARTIAL_FRAME
+                                    }
+                                }
+
+                                MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+                                int outputIndex = m_codec.dequeueOutputBuffer(info, 100); // set it back to 0 if there is error associate with this change in value
+
+                                if (outputIndex >= 0){
+
+                                    if (!detectionFlag){
+                                        m_codec.releaseOutputBuffer(outputIndex, false); // true if the surface is available
+                                    }
+
+                                    else if (detectionFlag){
+                                        try {
+                                            Image image = m_codec.getOutputImage(outputIndex);
+                                            Bitmap BM = imgToBM(image);
+                                            try {
+                                                if (!queue.isEmpty()){
+                                                    queue.clear();
+                                                }
+                                                queue.put(BM);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        m_codec.releaseOutputBuffer(outputIndex, false); // true if the surface is available
+                                    }
+                                }
+                            } // end of if to send full frame
+                        }
+                    } catch (SocketException socketException) {
+                        socketException.printStackTrace();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                }
+            }).start();
+
+        }
+        if (strCommand == "streamoff"){
+            Log.d("Codec State","stopped and released called...");
+            m_codec.stop();
+            m_codec.release();
+        }
+
     }
 }
