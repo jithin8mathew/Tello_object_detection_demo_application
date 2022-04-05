@@ -275,33 +275,31 @@ public class droneController extends AppCompatActivity {
     public void videoServer(final String strCommand, final BlockingQueue frameV) throws IOException { // add this for surfaceView : , Surface surface
         telloConnect(strCommand);
 
-        BlockingQueue queue = frameV;
-
+        BlockingQueue queue = frameV; // create a BlockingQueue since this function creates a thread and outputs a video frame which has to be displayed on the UI thread
+                                      // populating a queue and withdrawing from the queue outside the thread seem to be the best way to get the individual frames.
         if (strCommand == "streamon"){
             new Thread(new Runnable() {
-                public String videoString;
-                Boolean streamon = true;
-                public Bitmap resizedBM;
+                Boolean streamon = true;    // keeps track if the video stream is on or off
 
                 @Override
                 public void run() {
-
+                    // SPS and PPS and the golden key (it is like the right combination of keys used to unlock a lock) to decoding the video and displaying the stream
                     byte[] header_sps = {0, 0, 0, 1, 103, 77, 64, 40, (byte) 149, (byte) 160, 60, 5, (byte) 185}; // the correct SPS NAL
                     byte[] header_pps = {0, 0, 0, 1, 104, (byte) 238, 56, (byte) 128};  // the correct PPS NAL
 
-                    MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 960, 720);
-                    format.setByteBuffer("csd-0", ByteBuffer.wrap(header_sps)); // this is a serious no no
-                    format.setByteBuffer("csd-1", ByteBuffer.wrap(header_pps));
-                    format.setInteger(MediaFormat.KEY_WIDTH, 960);
+                    MediaFormat format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 960, 720); // H.264 is also know as AVC or Advanced Video Coding
+                    format.setByteBuffer("csd-0", ByteBuffer.wrap(header_sps)); // pass the SPS keys
+                    format.setByteBuffer("csd-1", ByteBuffer.wrap(header_pps)); // pass the PPS keys
+                    format.setInteger(MediaFormat.KEY_WIDTH, 960);              // by default the tello outputs 960 x 720 video
                     format.setInteger(MediaFormat.KEY_HEIGHT, 720);
-                    format.setInteger(MediaFormat.KEY_CAPTURE_RATE,30);
-                    format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible); //
+                    format.setInteger(MediaFormat.KEY_CAPTURE_RATE,30);         // 25-30 fps is good. Feel free to experiment
+                    format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible); // the output is a YUV420 format which need to be converted later
                     format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 960 * 720);
 
                     try {
-                        m_codec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);
-                        m_codec.configure(format, null ,null,0); // was 0
-                        startMs = System.currentTimeMillis();
+                        m_codec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_AVC);  // initialize the decoder with AVC format.
+                        m_codec.configure(format, null ,null,0); // pass the format configuration to media codec with surface 'null' if you are processing the video for tasks like object detection, if not set to true
+                        startMs = System.currentTimeMillis();   //calculate time to pass to the codec
                         m_codec.start();
 
                     } catch (IOException e) {
