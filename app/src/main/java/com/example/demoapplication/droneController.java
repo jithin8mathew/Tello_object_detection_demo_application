@@ -309,21 +309,21 @@ public class droneController extends AppCompatActivity {
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     DatagramSocket socketVideo = null;
                     try {
-                        socketVideo = new DatagramSocket(null);
-                        socketVideo.setReuseAddress(true);
+                        socketVideo = new DatagramSocket(null);     // similar to telloState() we create datagram socket with null parameter for address
+                        socketVideo.setReuseAddress(true);                  // we will be reusing the address
                         socketVideo.setBroadcast(true);
-                        socketVideo.bind(new InetSocketAddress(11111));
+                        socketVideo.bind(new InetSocketAddress(11111)); // based on tell SDK 1.3, the port for receiving the video frames is 11111
 
 
-                        byte[] videoBuf = new byte[2048];
-                        DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length);
+                        byte[] videoBuf = new byte[2048];                   // create an empty byte buffer of size 2018 (you can change the size)
+                        DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length); // create a datagram packet
                         int destPos = 0;
-                        byte[] data_new = new byte[60000]; // 1460 + 3
-                        while (streamon) {
-                            socketVideo.receive(videoPacket);
+                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
+                        while (streamon) {                                  // infinite loop to continiously receive
+                            socketVideo.receive(videoPacket);               // receive packets from socket
                             System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
                             destPos += videoPacket.getLength();
-                            byte[] pacMan = new byte[videoPacket.getLength()];
+                            byte[] pacMan = new byte[videoPacket.getLength()]; // create a tempory byte buffer with the received packet size
                             System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), pacMan, 0, videoPacket.getLength());
                             int len = videoPacket.getLength();
                             output.write(pacMan);
