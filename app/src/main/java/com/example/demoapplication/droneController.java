@@ -6,6 +6,7 @@ import static java.lang.Thread.interrupted;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -56,11 +57,14 @@ public class droneController extends AppCompatActivity {
 
     Pattern statePattern = Pattern.compile("-*\\d{0,3}\\.?\\d{0,2}[^\\D\\W\\s]");  // a regex pattern to read the tello state
     private int RC[] = {0,0,0,0};       // initialize an array of variables for remote control
+    private Handler telloStateHandler;  // and handler needs to be created to display the tello state values in the UI in realtime
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drone_controller);
+
+        telloStateHandler = new Handler();
 
         jdroneBattery = findViewById(R.id.droneBattery); // reads drone battery level
         jdroneTOF = findViewById(R.id.droneTOF);         // reading Time of Flight
@@ -103,30 +107,48 @@ public class droneController extends AppCompatActivity {
             }
         });
 
-        JoystickView leftjoystick = (JoystickView) findViewById(R.id.joystickViewLeft);
-        leftjoystick.setOnMoveListener(new JoystickView.OnMoveListener() {
-            @Override
-            public void onMove(int angle, int strength) {
+        JoystickView leftjoystick = (JoystickView) findViewById(R.id.joystickViewLeft); // left joystick where the angle is the movement angle and strength is the extend to which you push the joystick
+        leftjoystick.setOnMoveListener((angle, strength) -> {
 
-                if (angle >45 && angle <=135){
-                    RC[2]= strength;
-                }
-                if (angle >226 && angle <=315){
-                    strength *= -1;
-                    RC[2]= strength;
-                }
-                if (angle >135 && angle <=225){
-                    strength *= -1;
-                    RC[3]= strength;
-                }
-                if (angle >316 && angle <=359 || angle >0 && angle <=45){
-                    RC[3]= strength;
-                }
-
-                telloConnect("rc "+Integer.toString(RC[0])+" "+Integer.toString(RC[1])+" "+Integer.toString(RC[2])+" "+Integer.toString(RC[3]));
-                Arrays.fill(RC, 0);
-
+            if (angle >45 && angle <=135){
+                RC[2]= strength;
             }
+            if (angle >226 && angle <=315){
+                strength *= -1;
+                RC[2]= strength;
+            }
+            if (angle >135 && angle <=225){
+                strength *= -1;
+                RC[3]= strength;
+            }
+            if (angle >316 && angle <=359 || angle >0 && angle <=45){
+                RC[3]= strength;
+            }
+
+            telloConnect("rc "+ RC[0] +" "+ RC[1] +" "+ RC[2] +" "+ RC[3]); // send the command eg,. 'rc 10 00 32 00'
+            Arrays.fill(RC, 0); // reset the array with 0 after every virtual joystick move
+
+        });
+
+        JoystickView rightjoystick = (JoystickView) findViewById(R.id.joystickViewRight);
+        rightjoystick.setOnMoveListener((angle, strength) -> {
+            if (angle >45 && angle <=135){
+                RC[1]= strength;
+            }
+            if (angle >226 && angle <=315){
+                strength *= -1;
+                RC[1]= strength;
+            }
+            if (angle >135 && angle <=225){
+                strength *= -1;
+                RC[0]= strength;
+            }
+            if (angle >316 && angle <=359 || angle >0 && angle <=45){
+                RC[0]= strength;
+            }
+
+            telloConnect("rc "+ RC[0] +" "+ RC[1] +" "+ RC[2] +" "+ RC[3]);
+            Arrays.fill(RC, 0); // reset the array with 0 after every virtual joystick move
         });
 
     }  // end of oncreate
@@ -181,7 +203,7 @@ public class droneController extends AppCompatActivity {
                                         }
 
                                         Log.d("Battery Charge : ",text+"%");
-                                        telloBattHandler.post(new Runnable() {
+                                        telloStateHandler.post(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try{
@@ -200,15 +222,12 @@ public class droneController extends AppCompatActivity {
                                                     jdroneBaro.setText("Baro: "+dec.get(11)+"m");
                                                     jdroneHeight.setText("Height: "+dec.get(9));
                                                     jdroneTemperature.setText("Temperature: "+dec.get(7)+"C");
-                                                    jHorizontal.setRotation(Integer.parseInt(dec.get(0))*2);
                                                     jdroneSpeed.setText("Speed :"+ Integer.parseInt(dec.get(3)) + Integer.parseInt(dec.get(4)) + Integer.parseInt(dec.get(5))+"cm/s");
                                                     jdroneAccleration.setText("Acceleration: "+Math.round(Math.sqrt(Math.pow(Double.parseDouble(dec.get(13)),2)+Math.pow(Double.parseDouble(dec.get(14)),2)+Math.pow(Double.parseDouble(dec.get(15)),2)))+"g");
                                                     // https://physics.stackexchange.com/questions/41653/how-do-i-get-the-total-acceleration-from-3-axes
 
-                                                    telloBattHandler.removeCallbacks(this);
+                                                    telloStateHandler.removeCallbacks(this);
 
-//                                                                                }
-//                                                                            });
                                                 }catch (Exception e){
                                                     Log.e("Array out of bounds", "error",e);
                                                 }
