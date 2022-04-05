@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +64,7 @@ public class droneController extends AppCompatActivity {
     private FloatingActionButton connection;
     private ImageView actionTakeOff; // button to get the drone to takeoff
     private ImageView actionLnad;    // button to get the drone to land
+    private ImageView bitImageView; // this is the imageview to which the drone video feed will be displayed
 
     private int connectionClickCounter = 1; // for counting the number of times the button is clicked
     private boolean connectionFlag = false; // to check and maintain the connection status of the drone. Initially the drone is not conected, so the status is false
@@ -73,6 +75,7 @@ public class droneController extends AppCompatActivity {
     long startMs;                       // variable to calculate the time difference for video codec
     private MediaCodec m_codec;         // MediaCodec is used to decode the incoming H.264 stream from tello drone
     private boolean detectionFlag = false; // detectionFlag is used to track if the user wants to perform object detection
+    private boolean videoStreamFlag = false; // keeps track of the video streaming status from the drone
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +92,8 @@ public class droneController extends AppCompatActivity {
         jdroneSpeed = findViewById(R.id.droneSpeed);     // reading drone speed
         jdroneAccleration = findViewById(R.id.droneAccleration);    // reading drone accleration
         jdroneWIFI = findViewById(R.id.droneWIFI);       // getting the wifi status
-//        jdroneWIFI.setBackgroundResource(R.drawable.rounded_corner_red);
+        jdroneWIFI.setBackgroundResource(R.drawable.rounded_corner_red);
+        bitImageView = findViewById(R.id.bitView);
 
         connection = findViewById(R.id.connectToDrone); // a button to initiate establishing SDK mode with the drone by sending 'command' command
         connection.setOnClickListener(new View.OnClickListener(){
@@ -164,6 +168,31 @@ public class droneController extends AppCompatActivity {
 
             telloConnect("rc "+ RC[0] +" "+ RC[1] +" "+ RC[2] +" "+ RC[3]);
             Arrays.fill(RC, 0); // reset the array with 0 after every virtual joystick move
+        });
+
+        videoFeedaction.setOnClickListener(view -> {
+            if (connectionFlag) {
+                if (videoFeedaction.isChecked()) {
+                    videoStreamFlag = true;
+                    try {
+                        BlockingQueue<Bitmap> frameV = new LinkedBlockingQueue<>(2); // you can increase the blocking queue capacity, it dosen't matter
+                        videoServer("streamon", frameV);
+                        Runnable DLV = new displayBitmap(frameV);
+                        new Thread(DLV).start();
+//                        Runnable r = new spikeDetectionThread(frameV);
+//                        new Thread(r).start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (!videoFeedaction.isChecked()) {
+                    telloConnect("streamoff");
+                    videoStreamFlag = false;
+                }
+            } else {
+                Toast.makeText(droneController.this, "Drone disconnected", Toast.LENGTH_SHORT);
+                videoFeedaction.setChecked(false);
+            }
         });
 
     }  // end of oncreate
@@ -283,7 +312,7 @@ public class droneController extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    // SPS and PPS and the golden key (it is like the right combination of keys used to unlock a lock) to decoding the video and displaying the stream
+                    // SPS and PPS are the golden key (it is like the right combination of keys used to unlock a lock) to decoding the video and displaying the stream
                     byte[] header_sps = {0, 0, 0, 1, 103, 77, 64, 40, (byte) 149, (byte) 160, 60, 5, (byte) 185}; // the correct SPS NAL
                     byte[] header_pps = {0, 0, 0, 1, 104, (byte) 238, 56, (byte) 128};  // the correct PPS NAL
 
@@ -411,5 +440,34 @@ public class droneController extends AppCompatActivity {
         yuvImage.compressToJpeg(new Rect(0,0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
         byte[] imgBytes = out.toByteArray();
         return BitmapFactory.decodeByteArray(imgBytes, 0 , imgBytes.length);
+    }
+
+    public class displayBitmap implements Runnable{
+
+        protected BlockingQueue displayQueue;
+        protected Bitmap displayBitmap;
+
+        public displayBitmap(BlockingQueue displayQueue_){
+            this.displayQueue = displayQueue_;
+        }
+
+        @Override
+        public void run(){
+
+            while (true){
+                try {
+                    displayBitmap = (Bitmap) displayQueue.take();
+                    displayQueue.clear();
+                    if (displayQueue != null){
+                        runOnUiThread(() -> { // needs to be on UI thread
+                            bitImageView.setImageBitmap(displayBitmap);
+                            bitImageView.invalidate();
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
