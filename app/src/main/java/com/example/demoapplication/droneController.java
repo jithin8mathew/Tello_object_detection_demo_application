@@ -306,7 +306,7 @@ public class droneController extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();  // this is were the data from video stream will be stored before passing it to media codec
                     DatagramSocket socketVideo = null;
                     try {
                         socketVideo = new DatagramSocket(null);     // similar to telloState() we create datagram socket with null parameter for address
@@ -317,22 +317,22 @@ public class droneController extends AppCompatActivity {
 
                         byte[] videoBuf = new byte[2048];                   // create an empty byte buffer of size 2018 (you can change the size)
                         DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length); // create a datagram packet
-                        int destPos = 0;
-                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
+//                        int destPos = 0;
+//                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
                         while (streamon) {                                  // infinite loop to continiously receive
                             socketVideo.receive(videoPacket);               // receive packets from socket
-                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
-                            destPos += videoPacket.getLength();
+//                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
+//                            destPos += videoPacket.getLength();             // get the length of the packet
                             byte[] pacMan = new byte[videoPacket.getLength()]; // create a tempory byte buffer with the received packet size
                             System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), pacMan, 0, videoPacket.getLength());
                             int len = videoPacket.getLength();
                             output.write(pacMan);
-                            if (len < 1460) {
-                                destPos=0;
-                                byte[] data = output.toByteArray();
-                                output.reset();
+                            if (len < 1460) {                               // generally, each frame of video from tello is 1460 bytes in size, with the ending frame that is usually less than <1460 bytes which indicate end of a sequence
+//                                destPos=0;
+                                byte[] data = output.toByteArray();         // one the stream reaches the end of sequence, the entire byte array containing one complete frame is passed to data and the output variable is reset to receive newer frames
+                                output.reset();                             // reset to receive newer frame
                                 output.flush();
-                                output.close();
+                                output.close();                             // close
                                 int inputIndex = m_codec.dequeueInputBuffer(-1); // dosent matter of its -1 of 10000
                                 if (inputIndex >= 0) {
                                     ByteBuffer buffer = m_codec.getInputBuffer(inputIndex);
@@ -351,18 +351,18 @@ public class droneController extends AppCompatActivity {
                                 if (outputIndex >= 0){
 
                                     if (!detectionFlag){
-                                        m_codec.releaseOutputBuffer(outputIndex, false); // true if the surface is available
+                                        m_codec.releaseOutputBuffer(outputIndex, false); // true if the surfaceView is available
                                     }
 
                                     else if (detectionFlag){
                                         try {
-                                            Image image = m_codec.getOutputImage(outputIndex);
-                                            Bitmap BM = imgToBM(image);
+                                            Image image = m_codec.getOutputImage(outputIndex); // store the decoded (decoded by Mediacodec) data to Image format
+                                            Bitmap BM = imgToBM(image);                        // convert from image fromat to BitMap format
                                             try {
                                                 if (!queue.isEmpty()){
                                                     queue.clear();
                                                 }
-                                                queue.put(BM);
+                                                queue.put(BM);                                 // pass the data to the queue created earlier
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                             }
@@ -385,13 +385,13 @@ public class droneController extends AppCompatActivity {
         }
         if (strCommand == "streamoff"){
             Log.d("Codec State","stopped and released called...");
-            m_codec.stop();
+            m_codec.stop();         // stop and release the codec
             m_codec.release();
         }
 
     }
 
-    private Bitmap imgToBM(Image image){
+    private Bitmap imgToBM(Image image){        // convert from Image to Bitmap format for neural network processing.
         Image.Plane[] p = image.getPlanes();
         ByteBuffer y = p[0].getBuffer();
         ByteBuffer u = p[1].getBuffer();
