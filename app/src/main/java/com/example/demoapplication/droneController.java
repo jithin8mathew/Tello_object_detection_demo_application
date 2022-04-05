@@ -6,6 +6,10 @@ import static java.lang.Thread.interrupted;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.Image;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -66,6 +70,9 @@ public class droneController extends AppCompatActivity {
     Pattern statePattern = Pattern.compile("-*\\d{0,3}\\.?\\d{0,2}[^\\D\\W\\s]");  // a regex pattern to read the tello state
     private int RC[] = {0,0,0,0};       // initialize an array of variables for remote control
     private Handler telloStateHandler;  // and handler needs to be created to display the tello state values in the UI in realtime
+    long startMs;                       // variable to calculate the time difference for video codec
+    private MediaCodec m_codec;         // MediaCodec is used to decode the incoming H.264 stream from tello drone
+    private boolean detectionFlag = false; // detectionFlag is used to track if the user wants to perform object detection
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -384,5 +391,27 @@ public class droneController extends AppCompatActivity {
             m_codec.release();
         }
 
+    }
+
+    private Bitmap imgToBM(Image image){
+        Image.Plane[] p = image.getPlanes();
+        ByteBuffer y = p[0].getBuffer();
+        ByteBuffer u = p[1].getBuffer();
+        ByteBuffer v = p[2].getBuffer();
+
+        int ySz = y.remaining();
+        int uSz = u.remaining();
+        int vSz = v.remaining();
+
+        byte[] jm8 = new byte[ySz + uSz + vSz];
+        y.get(jm8, 0, ySz);
+        v.get(jm8, ySz, vSz);
+        u.get(jm8, ySz + vSz, uSz);
+
+        YuvImage yuvImage = new YuvImage(jm8, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0,0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
+        byte[] imgBytes = out.toByteArray();
+        return BitmapFactory.decodeByteArray(imgBytes, 0 , imgBytes.length);
     }
 }
