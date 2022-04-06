@@ -2,7 +2,7 @@
 
 This repository will walk you through android app development process for object detection using Tello Drone.
 
-[![App banner](./assets/CoverPictureJJM.png)](https://github.com/jithin8mathew)
+[![App banner](./app/src/main/assets/droneControl_initial.png)](https://github.com/jithin8mathew)
 
 This project will demonstrate how to:
 - Create a UI for controlling Tello Drone
