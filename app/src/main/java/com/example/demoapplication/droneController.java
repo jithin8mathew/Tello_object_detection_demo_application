@@ -240,8 +240,8 @@ public class droneController extends AppCompatActivity {
                         videoHandler("streamon", frameV);
                         Runnable DLV = new displayBitmap(frameV);
                         new Thread(DLV).start();
-//                        Runnable r = new spikeDetectionThread(frameV);
-//                        new Thread(r).start();
+                        Runnable r = new objectDetectionThread(frameV);
+                        new Thread(r).start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -407,18 +407,18 @@ public class droneController extends AppCompatActivity {
 
                         byte[] videoBuf = new byte[2048];                   // create an empty byte buffer of size 2018 (you can change the size)
                         DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length); // create a datagram packet
-//                        int destPos = 0;
-//                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
+                        int destPos = 0;
+                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
                         while (streamon) {                                  // infinite loop to continuously receive
                             socketVideo.receive(videoPacket);               // receive packets from socket
-//                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
-//                            destPos += videoPacket.getLength();             // get the length of the packet
+                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
+                            destPos += videoPacket.getLength();             // get the length of the packet
                             byte[] pacMan = new byte[videoPacket.getLength()]; // create a temporary byte buffer with the received packet size
                             System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), pacMan, 0, videoPacket.getLength());
                             int len = videoPacket.getLength();
                             output.write(pacMan);
                             if (len < 1460) {                               // generally, each frame of video from tello is 1460 bytes in size, with the ending frame that is usually less than <1460 bytes which indicate end of a sequence
-//                                destPos=0;
+                                destPos=0;
                                 byte[] data = output.toByteArray();         // one the stream reaches the end of sequence, the entire byte array containing one complete frame is passed to data and the output variable is reset to receive newer frames
                                 output.reset();                             // reset to receive newer frame
                                 output.flush();
@@ -519,6 +519,9 @@ public class droneController extends AppCompatActivity {
                 try {
                     displayBitmap = (Bitmap) displayQueue.take();           // take data (video frame) from blocking queue
                     displayQueue.clear();                                   // clear the queue after taking
+                    if (displayBitmap!= null){
+                        Log.e("Bitmap","not null");
+                    }
                     if (displayQueue != null){
                         runOnUiThread(() -> {                               // needs to be on UI thread
                             bitImageView.setImageBitmap(displayBitmap);     // set the bitmap to current frame in the queue
