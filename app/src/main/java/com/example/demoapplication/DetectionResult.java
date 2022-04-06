@@ -174,7 +174,7 @@ public class DetectionResult extends View {
     public DetectionResult(Context context, AttributeSet attrs) {
         super(context, attrs);
         jPaintRect = new Paint();
-        jPaintRect.setColor(Color.parseColor("#000000"));
+        jPaintRect.setColor(Color.WHITE);
         jPaintTxt = new Paint();
     }
 
@@ -185,7 +185,7 @@ public class DetectionResult extends View {
         if (jResults == null)
             return;
         for (Result result : jResults) {
-            jPaintRect.setStrokeWidth(5);
+            jPaintRect.setStrokeWidth(8);
             jPaintRect.setStyle(Paint.Style.STROKE);
             RectF recT = new RectF(result.rect);
             canvas.drawRoundRect(recT,10,10, jPaintRect);
