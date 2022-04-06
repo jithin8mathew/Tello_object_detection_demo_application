@@ -176,7 +176,7 @@ public class droneController extends AppCompatActivity {
                     videoStreamFlag = true;
                     try {
                         BlockingQueue<Bitmap> frameV = new LinkedBlockingQueue<>(2); // you can increase the blocking queue capacity, it dosen't matter
-                        videoServer("streamon", frameV);
+                        videoHandler("streamon", frameV);
                         Runnable DLV = new displayBitmap(frameV);
                         new Thread(DLV).start();
 //                        Runnable r = new spikeDetectionThread(frameV);
@@ -301,7 +301,7 @@ public class droneController extends AppCompatActivity {
         }).start();
     }
 
-    public void videoServer(final String strCommand, final BlockingQueue frameV) throws IOException { // add this for surfaceView : , Surface surface
+    public void videoHandler(final String strCommand, final BlockingQueue frameV) throws IOException { // add this for surfaceView : , Surface surface
         telloConnect(strCommand);
 
         BlockingQueue queue = frameV; // create a BlockingQueue since this function creates a thread and outputs a video frame which has to be displayed on the UI thread
