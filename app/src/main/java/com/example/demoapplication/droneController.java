@@ -3,11 +3,15 @@ package com.example.demoapplication;
 import static android.os.SystemClock.sleep;
 import static java.lang.Thread.interrupted;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
@@ -26,8 +30,20 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.pytorch.IValue;
+import org.pytorch.LiteModuleLoader;
+import org.pytorch.Module;
+import org.pytorch.Tensor;
+import org.pytorch.torchvision.TensorImageUtils;
+
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -56,6 +72,7 @@ public class droneController extends AppCompatActivity {
     private TextView jdroneBattery;
     private TextView jdroneSpeed;
     private TextView jdroneAccleration;
+    private TextView droneObjectCount;
 
     private Switch videoFeedaction;
     private FloatingActionButton DronewheatSpikeDetection;
@@ -77,6 +94,31 @@ public class droneController extends AppCompatActivity {
     private boolean detectionFlag = false; // detectionFlag is used to track if the user wants to perform object detection
     private boolean videoStreamFlag = false; // keeps track of the video streaming status from the drone
 
+    // object detection variables and constants
+    private Module jMod = null;
+    private DetectionResult jResults;
+    private float rtThreshold = 0.30f;
+    //
+
+    public static String assetFilePath(Context context, String assetName) throws IOException {
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
+
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +135,10 @@ public class droneController extends AppCompatActivity {
         jdroneAccleration = findViewById(R.id.droneAccleration);    // reading drone accleration
         jdroneWIFI = findViewById(R.id.droneWIFI);       // getting the wifi status
         jdroneWIFI.setBackgroundResource(R.drawable.rounded_corner_red);
-        bitImageView = findViewById(R.id.bitView);
+
+        bitImageView = findViewById(R.id.bitView);      // ImageView on which the drone video will be projected
+        droneObjectCount = (TextView) findViewById(R.id.objectCountDrone);
+        jResults = findViewById(R.id.DetectionResultView); // this is a custom view that will display the object detection results (bounding boxes) on top of video Feed
 
         connection = findViewById(R.id.connectToDrone); // a button to initiate establishing SDK mode with the drone by sending 'command' command
         connection.setOnClickListener(new View.OnClickListener(){
@@ -470,4 +515,110 @@ public class droneController extends AppCompatActivity {
             }
         }
     }   // end of displayBitmap
+
+    public class objectDetectionThread implements Runnable{
+
+        private Bitmap threadBM;
+        private volatile ArrayList results;
+        protected BlockingQueue threadFrame = null;
+
+        public  objectDetectionThread(BlockingQueue consumerQueue){
+            this.threadFrame = consumerQueue;
+
+        }
+
+        @WorkerThread
+        @Nullable
+        public void run(){
+            Log.d("Strarting thread ","t");
+            while (true){
+                try {
+                    threadBM = (Bitmap) threadFrame.take();
+                    threadFrame.clear();
+                    analyseImage(threadBM);
+                    sleep(250); // change to 1000 if error arises
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        public ArrayList getValue(){
+            return results;
+        }
+    }   // end of objectDetectionThread function
+
+    static class ResA{
+        private final ArrayList<Result> jResults;
+
+        public ResA(ArrayList<Result> results){
+            jResults = results;
+        }
+    }
+
+
+    @WorkerThread
+    @Nullable
+    protected droneController.ResA analyseImage(Bitmap BMtest){
+        try {
+            if (jMod == null){
+                jMod = LiteModuleLoader.load(droneController.assetFilePath(getApplicationContext(),"best.torchscript.ptl"));
+                BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("classes.txt")));
+                String line;
+                List<String> classes = new ArrayList<>();
+                while ((line = br.readLine()) != null) {
+                    classes.add(line);
+                }
+                ImageProcessing.jClasses = new String[classes.size()];
+                classes.toArray(ImageProcessing.jClasses);
+            }
+        }catch (IOException e){
+            Log.e("Spike Count: ", "Unable to load model...");
+            return null;
+        }
+
+        Matrix M = new Matrix();
+//        M.postRotate(90.0f);
+        BMtest = Bitmap.createBitmap(BMtest, 0,0, BMtest.getWidth(), BMtest.getHeight(), M, true);
+        Bitmap resizedBM = Bitmap.createScaledBitmap(BMtest, ImageProcessing.jInputW, ImageProcessing.jInputH, true);
+
+        // DL model inference starts here
+        final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBM, ImageProcessing.NO_MEAN_RGB, ImageProcessing.NO_STD_RGB);
+        IValue[] oTuple = jMod.forward(IValue.from(inputTensor)).toTuple();
+        final Tensor oTensor = oTuple[0].toTensor();
+        final float[] O = oTensor.getDataAsFloatArray();
+
+        float imSX = (float)BMtest.getWidth() / ImageProcessing.jInputW;
+        float imSY = (float)BMtest.getHeight() / ImageProcessing.jInputH;
+        float ivSX = (float)jResults.getWidth() /BMtest.getWidth();
+        float ivSY = (float)jResults.getHeight() /BMtest.getHeight();
+
+
+//        threshSliderRT = findViewById(R.id.IoUrealtime);
+//        final TextView iouTxtRT = findViewById(R.id.threshValrealtime);
+
+//        threshSliderRT.addOnChangeListener(new Slider.OnChangeListener() {
+//            @Override
+//            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+//                iouTxtRT.setText(Float.toString(value));
+//                realtimeThreshold = value/100;
+//            }
+//        });
+
+        final ArrayList<Result> results = ImageProcessing.outputsNMSFilter(O, rtThreshold, imSX, imSY, ivSX, ivSY, 0, 0);
+        int listSize =results.size();
+//        Log.d("List", results.toString());
+//        Log.d("Total Spikes", Integer.toString(listSize));
+//
+//        countDisplayRealtime = (TextView) findViewById(R.id.countDisplayRrealtime);
+//        countDisplayRealtime.setText(Integer.toString(listSize));
+        if (results != null){
+            runOnUiThread(() -> {
+                droneObjectCount.setText(listSize+"");
+                jResults.setResults(results);
+                jResults.invalidate();
+            });
+        }
+        return  new droneController.ResA(results);
+
+    }
 }
