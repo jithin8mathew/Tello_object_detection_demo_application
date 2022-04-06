@@ -518,24 +518,22 @@ public class droneController extends AppCompatActivity {
 
     public class objectDetectionThread implements Runnable{
 
-        private Bitmap threadBM;
-        private volatile ArrayList results;
-        protected BlockingQueue threadFrame = null;
+        private Bitmap threadBM;                            // create a bitmap variable
+        private volatile ArrayList results;                 // create an array list to store the object detection result
+        protected BlockingQueue threadFrame = null;         // blocking queue variable to take the data from blocking queue
 
         public  objectDetectionThread(BlockingQueue consumerQueue){
-            this.threadFrame = consumerQueue;
-
+            this.threadFrame = consumerQueue;               // retrieve element from queue
         }
 
         @WorkerThread
         @Nullable
         public void run(){
-            Log.d("Strarting thread ","t");
             while (true){
                 try {
                     threadBM = (Bitmap) threadFrame.take();
-                    threadFrame.clear();
-                    analyseImage(threadBM);
+                    threadFrame.clear();                    // clear queue after getting the frame
+                    analyseImage(threadBM);                 // function that will analyze the image for object detection
                     sleep(250); // change to 1000 if error arises
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -549,20 +547,18 @@ public class droneController extends AppCompatActivity {
 
     static class ResA{
         private final ArrayList<Result> jResults;
-
         public ResA(ArrayList<Result> results){
             jResults = results;
         }
     }
-
 
     @WorkerThread
     @Nullable
     protected droneController.ResA analyseImage(Bitmap BMtest){
         try {
             if (jMod == null){
-                jMod = LiteModuleLoader.load(droneController.assetFilePath(getApplicationContext(),"best.torchscript.ptl"));
-                BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("classes.txt")));
+                jMod = LiteModuleLoader.load(droneController.assetFilePath(getApplicationContext(),"best.torchscript.ptl"));        // load pre-trained pytorch module from the assets folder
+                BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("classes.txt")));                       // similarly load the classes.txt from assets
                 String line;
                 List<String> classes = new ArrayList<>();
                 while ((line = br.readLine()) != null) {
@@ -579,7 +575,7 @@ public class droneController extends AppCompatActivity {
         Matrix M = new Matrix();
 //        M.postRotate(90.0f);
         BMtest = Bitmap.createBitmap(BMtest, 0,0, BMtest.getWidth(), BMtest.getHeight(), M, true);
-        Bitmap resizedBM = Bitmap.createScaledBitmap(BMtest, ImageProcessing.jInputW, ImageProcessing.jInputH, true);
+        Bitmap resizedBM = Bitmap.createScaledBitmap(BMtest, ImageProcessing.jInputW, ImageProcessing.jInputH, true); // crate a bitmap of 640x640 dimension
 
         // DL model inference starts here
         final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(resizedBM, ImageProcessing.NO_MEAN_RGB, ImageProcessing.NO_STD_RGB);
