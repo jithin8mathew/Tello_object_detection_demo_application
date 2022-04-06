@@ -469,5 +469,5 @@ public class droneController extends AppCompatActivity {
                 }
             }
         }
-    }
+    }   // end of displayBitmap
 }
