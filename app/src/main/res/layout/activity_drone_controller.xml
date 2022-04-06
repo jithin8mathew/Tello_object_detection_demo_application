@@ -392,32 +392,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/totalSpikes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="136dp"
-        android:text="Total Spikes: 20546"
-        android:textSize="10dp"
-        android:visibility="invisible"
-        android:textColor="#ffcc00"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/droneHeight" />
-
-    <TextView
-        android:id="@+id/totalArea"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="136dp"
-        android:text="Total Area: 10ft"
-        android:textSize="10dp"
-        android:visibility="invisible"
-        android:textColor="#ffcc00"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/totalSpikes" />
-
     <com.example.demoapplication.DetectionResult
         android:id="@+id/DetectionResultView"
         android:layout_width="match_parent"
