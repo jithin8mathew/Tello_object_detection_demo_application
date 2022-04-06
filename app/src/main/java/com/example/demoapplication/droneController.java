@@ -79,7 +79,7 @@ public class droneController extends AppCompatActivity {
     private TextView droneObjectCount;
 
     private Switch videoFeedaction;
-    private FloatingActionButton DronewheatSpikeDetection;
+    private FloatingActionButton DroneObjectDetection;
     private SeekBar setDroneSpeedBar;
 
     private FloatingActionButton connection;
@@ -154,6 +154,23 @@ public class droneController extends AppCompatActivity {
         bitImageView = findViewById(R.id.bitView);      // ImageView on which the drone video will be projected
         droneObjectCount = (TextView) findViewById(R.id.objectCountDrone);
         jResults = findViewById(R.id.DetectionResultView); // this is a custom view that will display the object detection results (bounding boxes) on top of video Feed
+        DroneObjectDetection = findViewById(R.id.startDroneDetection);
+
+        DroneObjectDetection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (connectionFlag) {
+                    if (videoStreamFlag){
+                        Toast.makeText(droneController.this, "Starting object detection", Toast.LENGTH_SHORT).show();
+                        detectionFlag = true;
+                    }
+                    } else {
+                        detectionFlag = false;
+                        Toast.makeText(droneController.this, "Stopping object detection", Toast.LENGTH_SHORT);
+                    }
+            }
+
+        });
 
         connection = findViewById(R.id.connectToDrone); // a button to initiate establishing SDK mode with the drone by sending 'command' command
         connection.setOnClickListener(new View.OnClickListener(){
@@ -506,7 +523,7 @@ public class droneController extends AppCompatActivity {
     public class displayBitmap implements Runnable{
 
         protected BlockingQueue displayQueue;       // create a blocking queue to get the data from queue
-        protected Bitmap displayBitmap;             // create a bitmap variable for displaying bitmap
+        protected Bitmap displayBitmap_;             // create a bitmap variable for displaying bitmap
 
         public displayBitmap(BlockingQueue displayQueue_){
             this.displayQueue = displayQueue_;
@@ -517,14 +534,11 @@ public class droneController extends AppCompatActivity {
 
             while (true){
                 try {
-                    displayBitmap = (Bitmap) displayQueue.take();           // take data (video frame) from blocking queue
+                    displayBitmap_ = (Bitmap) displayQueue.take();           // take data (video frame) from blocking queue
                     displayQueue.clear();                                   // clear the queue after taking
-                    if (displayBitmap!= null){
-                        Log.e("Bitmap","not null");
-                    }
                     if (displayQueue != null){
                         runOnUiThread(() -> {                               // needs to be on UI thread
-                            bitImageView.setImageBitmap(displayBitmap);     // set the bitmap to current frame in the queue
+                            bitImageView.setImageBitmap(displayBitmap_);     // set the bitmap to current frame in the queue
                             bitImageView.invalidate();
                         });
                     }
