@@ -268,7 +268,7 @@ public class droneController extends AppCompatActivity {
                                                     jdroneSpeed.setText("Speed :"+ Integer.parseInt(dec.get(3)) + Integer.parseInt(dec.get(4)) + Integer.parseInt(dec.get(5))+"cm/s");
                                                     jdroneAccleration.setText("Acceleration: "+Math.round(Math.sqrt(Math.pow(Double.parseDouble(dec.get(13)),2)+Math.pow(Double.parseDouble(dec.get(14)),2)+Math.pow(Double.parseDouble(dec.get(15)),2)))+"g");
                                                     // https://physics.stackexchange.com/questions/41653/how-do-i-get-the-total-acceleration-from-3-axes
-                                                    // for calculating accleration I refered to the above link
+                                                    // for calculating acceleration I referred to the above link
 
                                                     telloStateHandler.removeCallbacks(this);
 
@@ -348,11 +348,11 @@ public class droneController extends AppCompatActivity {
                         DatagramPacket videoPacket = new DatagramPacket(videoBuf, videoBuf.length); // create a datagram packet
 //                        int destPos = 0;
 //                        byte[] data_new = new byte[60000]; // 1460 + 3      // create another byte buffer of size 600000
-                        while (streamon) {                                  // infinite loop to continiously receive
+                        while (streamon) {                                  // infinite loop to continuously receive
                             socketVideo.receive(videoPacket);               // receive packets from socket
 //                            System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), data_new, destPos, videoPacket.getLength());
 //                            destPos += videoPacket.getLength();             // get the length of the packet
-                            byte[] pacMan = new byte[videoPacket.getLength()]; // create a tempory byte buffer with the received packet size
+                            byte[] pacMan = new byte[videoPacket.getLength()]; // create a temporary byte buffer with the received packet size
                             System.arraycopy(videoPacket.getData(), videoPacket.getOffset(), pacMan, 0, videoPacket.getLength());
                             int len = videoPacket.getLength();
                             output.write(pacMan);
@@ -362,7 +362,7 @@ public class droneController extends AppCompatActivity {
                                 output.reset();                             // reset to receive newer frame
                                 output.flush();
                                 output.close();                             // close
-                                int inputIndex = m_codec.dequeueInputBuffer(-1); // dosent matter of its -1 of 10000
+                                int inputIndex = m_codec.dequeueInputBuffer(-1); // dosen't matter of its -1 of 10000
                                 if (inputIndex >= 0) {
                                     ByteBuffer buffer = m_codec.getInputBuffer(inputIndex);
                                     if (buffer != null){
@@ -386,7 +386,7 @@ public class droneController extends AppCompatActivity {
                                     else if (detectionFlag){
                                         try {
                                             Image image = m_codec.getOutputImage(outputIndex); // store the decoded (decoded by Mediacodec) data to Image format
-                                            Bitmap BM = imgToBM(image);                        // convert from image fromat to BitMap format
+                                            Bitmap BM = imgToBM(image);                        // convert from image format to BitMap format
                                             try {
                                                 if (!queue.isEmpty()){
                                                     queue.clear();
