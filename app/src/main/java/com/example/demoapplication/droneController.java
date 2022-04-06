@@ -444,8 +444,8 @@ public class droneController extends AppCompatActivity {
 
     public class displayBitmap implements Runnable{
 
-        protected BlockingQueue displayQueue;
-        protected Bitmap displayBitmap;
+        protected BlockingQueue displayQueue;       // create a blocking queue to get the data from queue
+        protected Bitmap displayBitmap;             // create a bitmap variable for displaying bitmap
 
         public displayBitmap(BlockingQueue displayQueue_){
             this.displayQueue = displayQueue_;
@@ -456,11 +456,11 @@ public class droneController extends AppCompatActivity {
 
             while (true){
                 try {
-                    displayBitmap = (Bitmap) displayQueue.take();
-                    displayQueue.clear();
+                    displayBitmap = (Bitmap) displayQueue.take();           // take data (video frame) from blocking queue
+                    displayQueue.clear();                                   // clear the queue after taking
                     if (displayQueue != null){
-                        runOnUiThread(() -> { // needs to be on UI thread
-                            bitImageView.setImageBitmap(displayBitmap);
+                        runOnUiThread(() -> {                               // needs to be on UI thread
+                            bitImageView.setImageBitmap(displayBitmap);     // set the bitmap to current frame in the queue
                             bitImageView.invalidate();
                         });
                     }
