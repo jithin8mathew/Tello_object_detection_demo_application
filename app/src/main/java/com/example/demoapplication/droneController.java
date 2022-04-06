@@ -592,25 +592,8 @@ public class droneController extends AppCompatActivity {
         float ivSX = (float)jResults.getWidth() /BMtest.getWidth();
         float ivSY = (float)jResults.getHeight() /BMtest.getHeight();
 
-
-//        threshSliderRT = findViewById(R.id.IoUrealtime);
-//        final TextView iouTxtRT = findViewById(R.id.threshValrealtime);
-
-//        threshSliderRT.addOnChangeListener(new Slider.OnChangeListener() {
-//            @Override
-//            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-//                iouTxtRT.setText(Float.toString(value));
-//                realtimeThreshold = value/100;
-//            }
-//        });
-
         final ArrayList<Result> results = ImageProcessing.outputsNMSFilter(O, rtThreshold, imSX, imSY, ivSX, ivSY, 0, 0);
         int listSize =results.size();
-//        Log.d("List", results.toString());
-//        Log.d("Total Spikes", Integer.toString(listSize));
-//
-//        countDisplayRealtime = (TextView) findViewById(R.id.countDisplayRrealtime);
-//        countDisplayRealtime.setText(Integer.toString(listSize));
         if (results != null){
             runOnUiThread(() -> {
                 droneObjectCount.setText(listSize+"");
