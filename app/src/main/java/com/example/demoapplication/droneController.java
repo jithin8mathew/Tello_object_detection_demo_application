@@ -590,7 +590,7 @@ public class droneController extends AppCompatActivity {
     protected droneController.ResA analyseImage(Bitmap BMtest){
         try {
             if (jMod == null){
-                jMod = LiteModuleLoader.load(droneController.assetFilePath(getApplicationContext(),"best.torchscript.ptl"));        // load pre-trained pytorch module from the assets folder
+                jMod = LiteModuleLoader.load(droneController.assetFilePath(getApplicationContext(),"yolov5s.torchscript.ptl"));        // load pre-trained pytorch module from the assets folder
                 BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("classes.txt")));                       // similarly load the classes.txt from assets
                 String line;
                 List<String> classes = new ArrayList<>();
@@ -601,7 +601,7 @@ public class droneController extends AppCompatActivity {
                 classes.toArray(ImageProcessing.jClasses);
             }
         }catch (IOException e){
-            Log.e("Spike Count: ", "Unable to load model...");
+            Log.e("Object detection: ", "Unable to load model...");
             return null;
         }
 

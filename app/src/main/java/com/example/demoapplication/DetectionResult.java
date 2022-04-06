@@ -43,7 +43,7 @@ class ImageProcessing{
 
     // model output is of size 25200*(num_of_class+5)
     private static int mOutputRow = 25200; // as decided by the YOLOv5 model for input image of size 640*640
-    private static int mOutputColumn = 6; // left, top, right, bottom, score and 80 class probability
+    private static int mOutputColumn = 85; // left, top, right, bottom, score and 80 class probability
     //    private static float mThreshold = 0.30f; // score above which a detection is generated
     private static int mNmsLimit = 1000;
 
@@ -185,7 +185,7 @@ public class DetectionResult extends View {
         if (jResults == null)
             return;
         for (Result result : jResults) {
-            jPaintRect.setStrokeWidth(2);
+            jPaintRect.setStrokeWidth(5);
             jPaintRect.setStyle(Paint.Style.STROKE);
             RectF recT = new RectF(result.rect);
             canvas.drawRoundRect(recT,10,10, jPaintRect);
