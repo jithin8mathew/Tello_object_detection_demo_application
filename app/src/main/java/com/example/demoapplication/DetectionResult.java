@@ -174,7 +174,7 @@ public class DetectionResult extends View {
     public DetectionResult(Context context, AttributeSet attrs) {
         super(context, attrs);
         jPaintRect = new Paint();
-//        jPaintRect.setColor(ContextCompat.getColor(context, R.color.app_foreground_color));
+        jPaintRect.setColor(Color.parseColor("#000000"));
         jPaintTxt = new Paint();
     }
 

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -18,10 +19,13 @@ import android.media.Image;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -122,7 +126,18 @@ public class droneController extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title bar from android screen
+        getSupportActionBar().hide();
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_drone_controller);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(Color.parseColor("#000000"));
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.parseColor("#000000"));
+        }
 
         telloStateHandler = new Handler();
 
@@ -215,6 +230,7 @@ public class droneController extends AppCompatActivity {
             Arrays.fill(RC, 0); // reset the array with 0 after every virtual joystick move
         });
 
+        videoFeedaction = findViewById(R.id.videoFeed);
         videoFeedaction.setOnClickListener(view -> {
             if (connectionFlag) {
                 if (videoFeedaction.isChecked()) {
