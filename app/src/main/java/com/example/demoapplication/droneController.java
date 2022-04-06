@@ -534,7 +534,7 @@ public class droneController extends AppCompatActivity {
                     threadBM = (Bitmap) threadFrame.take();
                     threadFrame.clear();                    // clear queue after getting the frame
                     analyseImage(threadBM);                 // function that will analyze the image for object detection
-                    sleep(250); // change to 1000 if error arises
+                    sleep(250);                         // change to 1000 if error arises
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
