@@ -4,7 +4,7 @@
 
 [![App banner](./app/src/main/assets/droneControl_initial.png)](https://github.com/jithin8mathew)
 
-This project will demonstrate how to:
+### This project will demonstrate how to:
 - Create a UI for controlling Tello Drone
 - Handle drone using virtual controls
 - Process H.264 (AVC) encoded video from Tello and display it on app
@@ -20,7 +20,7 @@ This project will demonstrate how to:
 
 Open android studio> open demoApplication project > Build > run app (preferably connecting your phone)
 
-### Things to keep in mind
+### Things to keep in mind:
 
 - While testing on Pixel 4 (Android 12) I faced issues associated with UDP connection. After connecting to Tello's wifi, under internet> wifi> TelloNetworkName> Privacy, there are two options. 1) Use randomized MAC (default) 2) Use device MAC. After connecting to Tello netwok, swith between these options before using the app.
 - The above step will disconnect from the wifi and reconnect again, only then will this app work on Pixel 4 (Android 12), this could be only a problem on my device Pixel 4 in general (I don't know it yet)
