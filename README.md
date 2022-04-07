@@ -40,6 +40,7 @@
 - 2.	Some of the calculations like drone acceleration etc. needs more attention and correction.
 - 3.	Improve the efficiency of the code and simplify it.
 - 4.	Closing datagram sockets while not in use or going back to the main page is not working.
+- 5.    Capture image and record video buttons does not work at this point, but I will be adding these features soon.
 
 ### How to install this application?
 
