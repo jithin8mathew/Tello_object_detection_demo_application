@@ -36,6 +36,7 @@
 - Perform near real-time object detection from Tello video frame
 
 ### Things to fix:
+- 0.    Video feed keeps getting stuck during flight (Temporary fix: turn the video switch at the top left of the screen on and off again). A permanent fix is needed.
 - 1.	I could not figure out a way to toggle between and SurfaceView and BitMap displaying for simply viewing video frames vs performing object detection
 - 2.	Some of the calculations like drone acceleration etc. needs more attention and correction.
 - 3.	Improve the efficiency of the code and simplify it.
