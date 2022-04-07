@@ -198,7 +198,7 @@ public class DetectionResult extends View {
             jPaintTxt.setColor(Color.BLACK);
             jPaintTxt.setStrokeWidth(0);
             jPaintTxt.setStyle(Paint.Style.FILL_AND_STROKE);
-            jPaintTxt.setTextSize(12);
+            jPaintTxt.setTextSize(22);
             try {
                 canvas.drawText(String.format("%s %.2f", ImageProcessing.jClasses[result.classIndex], result.score), result.rect.left + TX, result.rect.top + TY, jPaintTxt);
             } catch (Exception e) {

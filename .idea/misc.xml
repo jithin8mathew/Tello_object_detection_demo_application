@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Jithin Mathew/AndroidStudioProjects/demoApplication/app/src/main/res/drawable/round_back.xml" value="0.2365" />
+        <entry key="..\:/Users/Jithin Mathew/AndroidStudioProjects/demoApplication/app/src/main/res/drawable/rounded_corner.xml" value="0.2365" />
         <entry key="..\:/Users/Jithin Mathew/AndroidStudioProjects/demoApplication/app/src/main/res/drawable/rounded_corner_red.xml" value="0.1215" />
         <entry key="..\:/Users/Jithin Mathew/AndroidStudioProjects/demoApplication/app/src/main/res/layout/activity_drone_controller.xml" value="0.3" />
         <entry key="..\:/Users/Jithin Mathew/AndroidStudioProjects/demoApplication/app/src/main/res/layout/activity_main.xml" value="0.2" />

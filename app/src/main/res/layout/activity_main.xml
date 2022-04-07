@@ -15,6 +15,7 @@
         android:background="@drawable/outline_rocket_24"
         android:elevation="10dp"
         android:gravity="center"
+        app:maxImageSize="76dp"
         app:fabCustomSize="150dp"
         app:backgroundTint="#ffcc00"
         app:srcCompat="@drawable/outline_rocket_24"
