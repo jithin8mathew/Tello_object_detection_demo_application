@@ -43,6 +43,8 @@
 - 4.	Closing datagram sockets while not in use or going back to the main page is not working.
 - 5.    Capture image and record video buttons does not work at this point, but I will be adding these features soon.
 
+[![App demo](./app/src/main/assets/demoApplication.gif)](https://github.com/jithin8mathew)
+
 ### How to install this application?
 
 Open android studio> open demoApplication project > Build > run app (preferably connecting your phone)
