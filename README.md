@@ -3,6 +3,17 @@
 ### This repository will walk you through android app development process for object detection using Tello Drone.
 
 <p align="center">
+  <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
+   <img align="center" style="margin:0.5rem" src="https://badges.pufler.dev/visits/jithin8mathew/Tello_object_detection_demo_application"/>
+  </a>
+ 
+   <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
+   <img align="center" style="margin:0.5rem" src="https://badges.pufler.dev/updated/jithin8mathew/Tello_object_detection_demo_application"/>
+  </a>
+ 
+ </p>   
+
+<p align="center">
 
 <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
    <img align="center" style="margin:0.5rem" src="https://img.shields.io/github/search/jitin8mathew/Tello_object_detection_demo_application/goto?style=for-the-badge"/>
