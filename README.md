@@ -15,13 +15,13 @@
 
 <p align="center">
 
-<a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
+<!-- <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
    <img align="center" style="margin:0.5rem" src="https://img.shields.io/github/search/jitin8mathew/Tello_object_detection_demo_application/goto?style=for-the-badge"/>
-  </a>
+  </a> -->
 
-  <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
+<!--   <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
      <img align="center" style="margin:0.5rem" src="https://img.shields.io/codeclimate/issues/jithin8mathew/Tello_object_detection_demo_application?style=for-the-badge"/>
-    </a>
+    </a> -->
 
 <!--   <a href="https://github.com/jithin8mathew/tailwindcss-v2-dark-mode-template">
          <img align="center" style="margin:0.5rem" src="https://img.shields.io/github/downloads/jithin8mathew/Tello_object_detection_demo_application/total?style=for-the-badge"/>
