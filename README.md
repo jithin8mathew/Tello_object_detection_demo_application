@@ -69,7 +69,7 @@ Open android studio> open demoApplication project > Build > run app (preferably 
 
  More importantly, I am excited to see cool application of this project. And finally, if you liked this project and find it interesting, please :star: the project so that it can reach more people. Thank you and hope you have some fun with this!.
 
-This project is explained in detail at https://medium.com/@jithinjm1995/building-an-android-application-to-control-tello-drone-flight-and-perform-real-time-object-ab953f6c5f5b
+This project is explained in detail at https://medium.com/@jithin8mathew/building-an-android-application-to-control-tello-drone-flight-and-perform-real-time-object-ab953f6c5f5b
 
 # LICENSE
 
